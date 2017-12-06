@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{! Document Layout}}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Medicamentos</title>
+    <link rel="stylesheet" href="/public/bootstrap-3.3.7-dist/css/bootstrap.yeti.min.css">
+    <link rel="stylesheet" href="/public/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.10.1/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <link rel="stylesheet" href="/public/css/select2.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.4.2/r-2.2.0/rg-1.0.2/sc-1.4.3/sl-1.2.3/datatables.min.css"/>
+    <link rel="stylesheet" href="/public/css/animate.css">
+    <link rel="stylesheet" href="/public/css/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+    <link rel="stylesheet" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
+
+    {{#block "css"}}
+    {{/block}}
+</head>
+<body>
+ 
+<div class="container-fluid">
+    
+    {{# if patient }}
+        {{{ content }}} 
+    {{/ if }}
+
+    {{# if medicine }}
+        {{{ content }}} 
+    {{/ if }}
+    
+</div>
+   
+
+<script src="/public/js/jquery-1.11.1.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="/public/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.10.1/sweetalert2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/locale/es.js"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.4.2/r-2.2.0/rg-1.0.2/sc-1.4.3/sl-1.2.3/datatables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+<script>
+var medsId = [];
+
+$(document).ready(function() {
+
+    if ( '{{patientError}}' ) {
+        chargeBackground();
+        patientAlert();        
+    }
+
+    if ( '{{medError}}' ) {
+        chargeBackground();
+        medAlert();        
+    }
+
+
+});
+
+function chargeBackground() {
+    console.log('background')
+    $('.container-fluid').html(`
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-12">
+                <center>  <img style="width:100%; height:150px;" src="/public/img/logo_dd.png" alt=""> </center>
+            </div> 
+        </div>`
+    );
+}
+
+function patientAlert() {
+    swal({
+        title: 'Ingrese DNI del paciente',
+        input: 'text',
+        inputPlaceholder: 'por favor, ingrese el DNI del paciente',
+        inputValidator: function (value) {
+            return new Promise(function (resolve, reject) {
+                if (value) {
+                    $.ajax({
+                        url: '/api/patient',
+                        type: 'POST',
+                        data: { patient: value }
+                    })
+                    .done(function(data) {
+                        console.log(data)
+                        
+                        if(data.error) {
+                            reject(data.error)
+                        } else {
+                            resolve(data)
+                        }
+                        
+                    })
+                    .fail(function() {
+                        console.log('ocurrió un problema');
+                        reject('Ocurrio un problema');
+                    });
+                    
+                } else {
+                    reject('por favor, ingrese el DNI del paciente')
+                }
+            })
+        }
+    }).then(function (patient) {
+        window.location.replace(window.location.protocol + "//" + window.location.host + "/prescription/"+patient);
+    }, function (dismiss) {
+        patientAlert()
+    });
+}
+
+function medAlert() {
+    swal({
+        title: 'Seleccione un medicamento',
+        html: `
+            <a id="newMed" class="btn btn-default" style="color:grey;"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo medicamento</a>
+            <div id="newMedBox"></div>
+            <br>
+            <br>
+            <select style="width: 70%;" id="allMedicines"><option></option></select>
+        `
+    }).then(function () {
+        if($('#allMedicines').select2('data')[0].text != '') {
+            window.location.replace(window.location.protocol + "//" + window.location.host + "/medicine/"+ medsId[$('#allMedicines').select2('data')[0].text]);
+        } else {
+            medAlert()
+        }
+    }, function (dismiss) {
+        medAlert()
+    });
+
+    $.ajax({
+        url: '/api/medicines'
+    })
+    .done(function(data) {
+        console.log(data)    
+        var medsArr = [];
+
+        if (!data.error) {
+            data.forEach(function(element, index) {
+                medsId[element.name] = element.id;
+                medsArr.push({id: index, text:element.name})
+            });
+
+            $('#allMedicines').select2({
+                allowClear: true,
+                placeholder: 'Seleccione el medicamento',
+                data: medsArr
+            });
+        }
+    })
+    .fail(function() {
+        console.log('ocurrió un problema al obtener medicinas');
+    });
+
+    $('#newMed').on('click', function(){
+        $('#newMedBox').html(`
+        <div class="well">
+            <input id="newMedName" class="form-control" type="text" placeholder="Ingrese nombre del nuevo medicamento">
+            <br>
+            <p><a id="newMedBtn" class="btn btn-primary" role="button">Agregar nuevo medicamento</a></p>
+        </div>
+        `);
+
+        $('#newMedName').focus();
+
+        $('#newMedBtn').on('click', function() {
+            var newMedName = $('#newMedName').val();
+
+            if ( newMedName.length == 0 ) {
+                toastr.warning('Ingrese un nombre de medicamento');
+            } else {
+
+                $.ajax({
+                    url: '/api/medicines/select',
+                    type: 'POST',
+                    data: { name: newMedName }
+                })
+                .done(function(data) {
+                    if ( data != 'none' ) {
+                        toastr.warning('Ya existe el medicamento de nombre <b>'+newMedName+'</b>')
+                    } else {
+
+                        $.ajax({
+                            url: '/api/medicines/new',
+                            type: 'POST',
+                            data: { name: newMedName }
+                        })
+                        .done(function(data2) {
+                            console.log(data2)
+                            window.location.replace(window.location.protocol + "//" + window.location.host + "/medicine/"+ data2.id);
+                        })
+                        .fail(function() {
+                            console.log('ocurrió un problema al agregar medicamento');
+                        });
+
+                    }
+                })
+                .fail(function() {
+                    console.log('ocurrió un problema al buscar medicamento medicamento (para agregar)');
+                });
+
+            }
+
+        });
+    });
+
+    
+
+
+}
+
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
+</script>
+{{#block "js"}}
+{{/block}}
+</body>
+</html>
