@@ -70,7 +70,7 @@ function chargeBackground() {
     $('.container-fluid').html(`
         <div class="row">
             <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-12">
-                <center>  <img style="width:100%; height:150px;" src="medication/public/img/logo_dd.png" alt=""> </center>
+                <center>  <img style="width:100%; height:150px;" src="/medication/public/img/logo_dd.png" alt=""> </center>
             </div> 
         </div>`
     );
@@ -110,7 +110,7 @@ function patientAlert() {
             })
         }
     }).then(function (patient) {
-        window.location.replace(window.location.protocol + "//" + window.location.host + "/prescription/"+patient);
+        window.location.replace(window.location.protocol + "//" + window.location.host + "/medication/prescription/"+patient);
     }, function (dismiss) {
         patientAlert()
     });
@@ -129,7 +129,7 @@ function medAlert() {
         confirmButtonText: 'Seleccionar medicamento'
     }).then(function () {
         if($('#allMedicines').select2('data')[0].text != '') {
-            window.location.replace(window.location.protocol + "//" + window.location.host + "/medicine/"+ medsId[$('#allMedicines').select2('data')[0].text]);
+            window.location.replace(window.location.protocol + "//" + window.location.host + "/medication/medicine/"+ medsId[$('#allMedicines').select2('data')[0].text]);
         } else {
             medAlert()
         }
@@ -196,7 +196,7 @@ function medAlert() {
                         })
                         .done(function(data2) {
                             console.log(data2)
-                            window.location.replace(window.location.protocol + "//" + window.location.host + "/medicine/"+ data2.id);
+                            window.location.replace(window.location.protocol + "//" + window.location.host + "/medication/medicine/"+ data2.id);
                         })
                         .fail(function() {
                             console.log('ocurrió un problema al agregar medicamento');
