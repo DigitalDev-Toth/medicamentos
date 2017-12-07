@@ -6,15 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Medicamentos</title>
-    <link rel="stylesheet" href="/public/bootstrap-3.3.7-dist/css/bootstrap.yeti.min.css">
-    <link rel="stylesheet" href="/public/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/medication/public/bootstrap-3.3.7-dist/css/bootstrap.yeti.min.css">
+    <link rel="stylesheet" href="/medication/public/font-awesome-4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.10.1/sweetalert2.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
-    <link rel="stylesheet" href="/public/css/select2.css">
+    <link rel="stylesheet" href="/medication/public/css/select2.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.4.2/r-2.2.0/rg-1.0.2/sc-1.4.3/sl-1.2.3/datatables.min.css"/>
-    <link rel="stylesheet" href="/public/css/animate.css">
-    <link rel="stylesheet" href="/public/css/jquery-ui.css">
+    <link rel="stylesheet" href="/medication/public/css/animate.css">
+    <link rel="stylesheet" href="/medication/public/css/jquery-ui.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
     <link rel="stylesheet" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
 
@@ -36,9 +36,9 @@
 </div>
    
 
-<script src="/public/js/jquery-1.11.1.js"></script>
+<script src="/medication/public/js/jquery-1.11.1.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="/public/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="/medication/public/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.10.1/sweetalert2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
@@ -125,7 +125,8 @@ function medAlert() {
             <br>
             <br>
             <select style="width: 70%;" id="allMedicines"><option></option></select>
-        `
+        `,
+        confirmButtonText: 'Seleccionar medicamento'
     }).then(function () {
         if($('#allMedicines').select2('data')[0].text != '') {
             window.location.replace(window.location.protocol + "//" + window.location.host + "/medicine/"+ medsId[$('#allMedicines').select2('data')[0].text]);

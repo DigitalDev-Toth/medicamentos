@@ -45,7 +45,7 @@ const Index = {
 
 const Public = {
     method: "GET",
-    path: "/public/{path*}",
+    path: "/medication/public/{path*}",
     config: { auth: false },
         handler: {
             directory: {

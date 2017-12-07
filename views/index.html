@@ -4,7 +4,8 @@
 <style>
     .med-card {
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        padding:10px;
+        padding-left:10px;
+        padding-right:10px;
     }
 </style>
 {{/extend}}
@@ -26,8 +27,7 @@
                                     <table id="alertsTable" class="display nowrap" cellspacing="0" width="100%"  >
                                         <thead>
                                             <tr>
-                                                <th>Desde</th>
-                                                <th>Hasta</th>
+                                                <th>Alerta</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -138,6 +138,7 @@
                 </div>
             </div>
 
+            <!--
             <div class="col-md-8 col-xs-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -160,11 +161,12 @@
                     </div>
                 </div>
             </div>
+            -->
 
             <div class="col-md-8 col-xs-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Medicamentos en uso (cards)</h3>
+                        <h3 class="panel-title">Medicamentos en uso</h3>
                     </div>
                     <div style="margin:5px;" class="panel-body row" id="medicinesCards">
                         
@@ -184,6 +186,8 @@ var medicines = [];
 var medicinesTable;
 var alertsTable;
 var selectedTemplate;
+var currentMedContr = [];
+var alertCount = 0;
 
 $(document).ready(function() {
     $('#medPresentation').select2({
@@ -191,6 +195,7 @@ $(document).ready(function() {
         placeholder: 'Seleccione la presentación'
     });
 
+    /*
     medicinesTable = $('#medicinesTable').DataTable({
         responsive: true,
         order: [[ 0, "desc" ]],
@@ -200,10 +205,15 @@ $(document).ready(function() {
             { "visible": false, "targets": 6 }
         ]
     });
+    */
 
     alertsTable = $('#alertsTable').DataTable({
         responsive: true,
-        order: [[ 0, "desc" ]]
+        order: [[ 0, 'asc' ]],
+        paging:   false,
+        ordering: false,
+        info: false,
+        searching: false
 	})
 
     $.ajax({
@@ -221,7 +231,7 @@ $(document).ready(function() {
             sex = 'Femenino';
         }
         
-        console.log(patient)
+        console.log(JSON.stringify(patient));
         $('#patientName').html(patient.name.capitalize()+' '+patient.lastname.capitalize());
         $('#patientAge').html(patient.age+' años');
         $('#patientSex').html(sex);
@@ -260,6 +270,7 @@ $('#med-search').on('keyup', function(){
                     })
                     .done(function(data2) {
                         selectedMed = data2;
+                        console.log(selectedMed)
                         $('#medName').text(data2.name);
                         $('#medPresentation').attr({disabled :false});
                         $('#medDosis').attr({disabled :false});
@@ -372,7 +383,7 @@ function setMedQty() {
     var hours = duration.asHours();
     console.log(hours)
     */
-    
+
     setTimeout(function() {
         $('#medQty').val(Math.round( ( (24 / freq) * dose)) * days );
         $('#workingQty').empty();
@@ -411,6 +422,7 @@ $('#addMedBtn').on('click', function() {
         var newMedName = $('#medName').text();
         var newMedDays = $('#medDays').val();
         var newMedFreq = $('#medFreq').val();
+        var newMedDose = $('#medDosis').val();
         var newMedQty = $('#medQty').val();
         var newMedPresentation = $('#medPresentation').select2('data')[0].text
 
@@ -418,6 +430,7 @@ $('#addMedBtn').on('click', function() {
         var newMedEndDay = moment(newMedInitDay).add(newMedDays, 'days').format('YYYY-MM-DDThh:mm');
 
         var selectedMedCountQty = 0;
+        var selectedMedTotalQty = 0;
 
         /*
         var newMed = [
@@ -431,21 +444,69 @@ $('#addMedBtn').on('click', function() {
         if ( newMedQty > selectedTemplate.limitQty ) {
             toastr.warning('Se sobrepasa la cantidad máxima de prescripción');
         } else {
+            /*
             var newMed = [
                 newMedName, newMedInitDay, newMedEndDay, newMedQty, newMedDays, newMedFreq, newMedPresentation
-            ]
+            ]*/
+            
+            /*
+            currentMedContr[selectedMed.name] = {
+                concurrentUseList: selectedMed.rules.concurrentUseList
+            }
+            */
+
+            /*
+            medicines.forEach(function(element) {
+                currentMedContr[element.name].concurrentUseList.forEach(function(element2) {
+                    if ( !element.indexOf(element2) -1 ) {
+                        
+                    }
+                });
+            });
+            */
+
+            //console.log(currentMedContr)
+            
 
             medicines.forEach(function(element, index) {
-                if ( newMed[0] == element[0] ) {
-                    selectedMedCountQty += parseInt(element[3]);
-                }    
+                if ( newMedName == element.name ) {    
+                    selectedMedTotalQty += parseInt(element.qty);
+                    
+                    /*
+                    var rowNode = alertsTable
+                    .row.add(['El paciente ya está en un tratamiento con el medicamento <b>'+newMedName+'</b>'])
+                    .draw()
+                    .node();
+
+                    $( rowNode )
+                    .css( 'color', 'rgba(26, 188, 156,1.0)' )
+                    .animate( { color: 'black' }, 5000 );
+                    */
+
+                    }   
             });
+
+            selectedMedCountQty = selectedMedTotalQty + parseInt(newMedQty);
+
+            console.log(selectedMedCountQty)
+            console.log(selectedMedTotalQty)
 
             if ( selectedMedCountQty > selectedTemplate.limitQty ) {
                 toastr.warning('Se sobrepasa la cantidad máxima de prescripción');
             } else {
+                var newMed = {
+                    name: newMedName,
+                    initDay: newMedInitDay,
+                    endDay: newMedEndDay,
+                    days: newMedDays,
+                    freq: newMedFreq,
+                    dose: newMedDose,
+                    presentation: newMedPresentation,
+                    qty: newMedQty
+                }
                 medicines.push(newMed);
 
+                /*
                 var rowNode = medicinesTable
                 .row.add(newMed)
                 .draw()
@@ -454,10 +515,15 @@ $('#addMedBtn').on('click', function() {
                 $( rowNode )
                 .css( 'color', 'rgba(26, 188, 156,1.0)' )
                 .animate( { color: 'black' }, 5000 );
+                */
 
                 $('#medicinesCards').append(`
                     <div class="med-card col-md-4">
-                        testing
+                        <h3><center>${ newMed.name }</center></h3>
+                        <p>Desde: ${ moment(newMed.initDay).format('DD/MM/YYYY hh:mm') }</p>
+                        <p>Hasta: ${ moment(newMed.endDay).format('DD/MM/YYYY hh:mm') }</p>
+                        <p>Cantidad: ${newMed.qty}</p>
+                        <p>Indicaciones: <b>${newMed.dose}</b> <b>${newMed.presentation}</b> cada <b>${newMed.freq}</b> horas por <b>${newMed.days}</b> días.</p>
                     </div>
                 `)
             }
@@ -465,7 +531,6 @@ $('#addMedBtn').on('click', function() {
             
 
             //console.log(newMed)
-            console.log(selectedMedCountQty)
         }
 
         
