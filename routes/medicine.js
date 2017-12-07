@@ -2,7 +2,7 @@ import Joi from 'joi';
 
 const Medicine = [{
     method: ['GET'],
-    path: '/medicine/{id?}',
+    path: '/medication/medicine/{id?}',
     config: { 
         auth: false,
         handler: function(request, reply) {
@@ -97,7 +97,7 @@ const Medicine = [{
 },
 {
     method: ['GET'],
-    path: '/medicine/',
+    path: '/medication/medicine/',
     config: { 
         auth: false,
         handler: function(request, reply) {

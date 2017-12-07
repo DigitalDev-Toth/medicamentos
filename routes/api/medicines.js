@@ -3,7 +3,7 @@ import Joi from 'joi';
 const medicines = [
 {
     method: 'GET',
-    path: '/api/medicines',
+    path: '/medication/api/medicines',
     handler: function(request, reply) {
 
         let select = `
@@ -37,7 +37,7 @@ const medicines = [
 },
 {
     method: 'POST',
-    path: '/api/medicines/search',
+    path: '/medication/api/medicines/search',
     config: {
         handler: (request, reply) => {
             let name = request.payload.name;
@@ -77,7 +77,7 @@ const medicines = [
 },
 {
     method: 'POST',
-    path: '/api/medicines/select',
+    path: '/medication/api/medicines/select',
     config: {
         handler: (request, reply) => {
             let name = request.payload.name;
@@ -112,7 +112,7 @@ const medicines = [
 },
 {
     method: 'POST',
-    path: '/api/medicines/new',
+    path: '/medication/api/medicines/new',
     config: {
         handler: (request, reply) => {
             let name = request.payload.name;
@@ -197,7 +197,7 @@ const medicines = [
 },
 {
     method: 'PUT',
-    path: '/api/medicines',
+    path: '/medication/api/medicines',
     config: {
         handler: (request, reply) => {
             let medicine = JSON.parse(request.payload.medicine);

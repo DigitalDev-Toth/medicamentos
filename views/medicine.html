@@ -825,7 +825,7 @@ $('#newContraindication').on('click', function() {
 
         if(this.value.length >= 1) {
             $.ajax({
-                url: '/api/medicines/search',
+                url: '/medication/api/medicines/search',
                 type: 'POST',
                 data: { name: this.value }
             })
@@ -874,7 +874,7 @@ $('#saveButton').on('click', function() {
     }
 
     $.ajax({
-        url: '/api/medicines',
+        url: '/medication/api/medicines',
         type: 'PUT',
         data: {medicine: JSON.stringify(medicine)}
     })

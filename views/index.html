@@ -217,7 +217,7 @@ $(document).ready(function() {
 	})
 
     $.ajax({
-        url: '/api/patient',
+        url: '/medication/api/patient',
         type: 'POST',
         data: { patient: '{{{patient}}}' }
     })
@@ -249,7 +249,7 @@ $('#med-search').on('keyup', function(){
     });
     if(this.value.length >= 2) {
         $.ajax({
-			url: '/api/medicines/search',
+			url: '/medication/api/medicines/search',
 			type: 'POST',
 			data: { name: this.value }
 		})
@@ -264,7 +264,7 @@ $('#med-search').on('keyup', function(){
                 source: arr,
                 select: function( event, ui ) {
                     $.ajax({
-                        url: '/api/medicines/select',
+                        url: '/medication/api/medicines/select',
                         type: 'POST',
                         data: { name: ui.item.value }
                     })

@@ -55,7 +55,7 @@ testPatients['clinica2'] = [
 const patients = [
     {
         method: 'POST',
-        path: '/api/patient',
+        path: '/medication/api/patient',
         config: {
             handler: (request, reply) => {
                 //let ins = request.payload.ins;

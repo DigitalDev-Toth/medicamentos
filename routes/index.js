@@ -8,7 +8,7 @@ import APIMedicines     from './api/medicines';
 
 const Index = {
     method: ['GET'],
-    path: '/prescription/{dni?}',
+    path: '/medication/prescription/{dni?}',
     config: { 
         auth: false,
         handler: function(request, reply) {
