@@ -11,8 +11,7 @@ const prescriptions = [
 
             let select = `
             SELECT
-                id,
-                data AS data
+                data
             FROM
                 medicamentos
             WHERE 

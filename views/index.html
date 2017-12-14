@@ -232,7 +232,7 @@ $(document).ready(function() {
 
     medicinesTable = $('#medicinesTable').DataTable({
         responsive: true,
-        order: [[ 1, 'asc' ]],
+        order: [[ 1, 'desc' ]],
         language: {
             emptyTable: 'Sin prescripciones'
         },
@@ -298,6 +298,24 @@ function chargePrescriptions () {
     })
     .done(function(data) {
         console.log(data);
+        data.forEach(element => {
+            var addPrescription = [
+                element.data.name,
+                element.data.initDay,
+                element.data.endDay,
+                element.data.qty,
+                '<b>'+element.data.dose+'</b> <b>'+element.data.presentation+'</b> cada <b>'+element.data.freq+'</b> horas por <b>'+element.data.days+'</b> días.'
+            ]
+
+            var rowNode = medicinesTable
+            .row.add(addPrescription)
+            .draw()
+            .node();
+
+            $( rowNode )
+            .css( 'color', 'rgba(26, 188, 156,1.0)' )
+            .animate( { color: 'black' }, 5000 );
+        });
     })
     .fail(function() {
         console.log('ocurrió un problema al obtener medicinas');
