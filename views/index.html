@@ -7,6 +7,7 @@
         padding-left:10px;
         padding-right:10px;
     }
+
 </style>
 {{/extend}}
 
@@ -64,35 +65,35 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">Buscar medicamento</h3>
                     </div>
-                    <div class="panel-body">
-                        <div class="ui-widget">
-                            <input placeholder="&#xf002; Ingrese el nombre del medicamento" style="width:100%; font-family:Arial, FontAwesome" id="med-search">
+                    
+                    <div class="ui-widget">
+                        <input placeholder="&#xf002; Ingrese el nombre del medicamento" style="width:100%; font-family:Arial, FontAwesome" id="med-search">
+                    </div>
+                                
+                    <!--
+                    <center>  <select style="width: 90%;" id="search-med"><option></option></select> </center>
+                    -->
+                    <br>
+
+                    
+                    <div class="list-group" style="padding:10px;">
+                        <div class="list-group-item">
+                            <center>  
+                                <h4 class="list-group-item-heading">Nombre del medicamento <span id="maxPrescriptionQty"></span> </h4>
+                                <h4><b class="list-group-item-text" id="medName"> Ningún medicamento seleccionado </b></h4>           
+                            </center>
                         </div>
-                                   
-                        <!--
-                        <center>  <select style="width: 90%;" id="search-med"><option></option></select> </center>
-                        -->
-                        <br>
-
-                        <div class="well">
-                            <div class="list-group">
-                                <div class="list-group-item">
-                                    <center>
-                                        <h4 class="list-group-item-heading">Nombre del medicamento <span id="maxPrescriptionQty"></span> </h4>
-                                        <h4><b class="list-group-item-text" id="medName"> Ningún medicamento seleccionado </b></h4>
-                                    </center>
-                                </div>
-
-                                <div class="list-group-item">
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-6">
                                     <center>
                                         <h4 class="list-group-item-heading">Presentación</h4>
                                         <p class="list-group-item-text">
-                                            <select disabled style="width: 70%;" id="medPresentation"><option></option></select>
+                                            <select disabled style="width: 90%; font-size:39px;" id="medPresentation"><option></option></select>
                                         </p>
                                     </center>
                                 </div>
-
-                                <div class="list-group-item">
+                                <div class="col-md-6">
                                     <center>
                                         <h4 class="list-group-item-heading">Dosis</h4>
                                         <p class="list-group-item-text">
@@ -100,8 +101,12 @@
                                         </p>
                                     </center>
                                 </div>
+                            </div>  
+                        </div>
 
-                                <div class="list-group-item">
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-6">
                                     <center>
                                         <h4 class="list-group-item-heading">Frecuencia en horas</h4>
                                         <p class="list-group-item-text">
@@ -109,8 +114,7 @@
                                         </p>
                                     </center>
                                 </div>
-
-                                <div class="list-group-item">
+                                <div class="col-md-6">
                                     <center>
                                         <h4 class="list-group-item-heading">Tiempo en días</h4>
                                         <p class="list-group-item-text"> 
@@ -118,23 +122,33 @@
                                         </p>
                                     </center>
                                 </div>
+                            </div>  
+                        </div>
 
-                                <div class="list-group-item">
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-6">
                                     <center>
                                         <h4 class="list-group-item-heading">Cantidad</h4>
                                         <p class="list-group-item-text">
-                                            <input class="form-control" disabled style="text-align:center;" placeholder="Cantidad a dispensar" type="number" id="medQty"> 
-                                            
-                                            <div id="workingQty"></div>
+                                            <input class="form-control" disabled style="text-align:center;" placeholder="Cantidad a dispensar" type="number" id="medQty">                 
                                         </p>
                                     </center>
                                 </div>
-
-                            </div>
-
-                            <a disabled class="btn btn-primary" id="addMedBtn"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</a>
+                                <div class="col-md-6">
+                                    <center><div id="workingQty"></div></center>  
+                                </div>
+                            </div>  
                         </div>
+
+                        <div class="list-group-item">
+                            
+                        </div>
+
                     </div>
+
+                    <a class="btn btn-primary" style="visibility:hidden;">A</a>  
+                    <a disabled class="btn btn-primary pull-right" id="addMedBtn"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</a>         
                 </div>
             </div>
 
@@ -166,25 +180,29 @@
             <div class="col-md-8 col-xs-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Medicamentos en uso</h3>
+                        <h3 class="panel-title">Nuevas prescripciones</h3>
                     </div>
 
                     <div style="margin:5px;" class="panel-body row" id="medicinesCards"></div>
-
-                    <div class="well">
-                        <table id="medicinesTable" class="display nowrap" cellspacing="0" width="100%"  >
-                            <thead>
-                                <tr>
-                                    <th>Nombre</th>
-                                    <th>Desde</th>
-                                    <th>Hasta</th>
-                                    <th>Cantidad</th>
-                                    <th>Indicaciones</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
+                    <div id="cardsButtons"></div>
                     
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">En tratamiento</h3>
+                    </div>  
+                    <table id="medicinesTable" class="display nowrap" cellspacing="0" width="100%"  >
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Desde</th>
+                                <th>Hasta</th>
+                                <th>Cantidad</th>
+                                <th>Indicaciones</th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
             </div>
 
@@ -205,12 +223,13 @@ var medProgramList = []; // Los medicamentos que se están programando en la ses
 var toPrintList = []; // Lista de recetas a imprimir
 
 $(document).ready(function() {
+    $('#med-search').focus();
+
     $('#medPresentation').select2({
         allowClear: true,
         placeholder: 'Seleccione la presentación'
     });
 
-    
     medicinesTable = $('#medicinesTable').DataTable({
         responsive: true,
         order: [[ 1, 'asc' ]],
@@ -259,6 +278,9 @@ $(document).ready(function() {
         $('#patientName').html(patient.name.capitalize()+' '+patient.lastname.capitalize());
         $('#patientAge').html(patient.age+' años');
         $('#patientSex').html(sex);
+
+        chargePrescriptions(); // cargar todas las prescripciones del paciente
+
         //$('#patientWeight').html(patient.weight+' kilos');
         //$('#patientHeight').html(patient.height+' centimetros');
     })
@@ -266,6 +288,21 @@ $(document).ready(function() {
         console.log('ocurrió un problema al seleccionar paciente');
     });
 });
+
+
+function chargePrescriptions () {
+    $.ajax({
+        url: '/medication/api/prescriptions',
+        type: 'POST',
+        data: {patient: patient.dni}
+    })
+    .done(function(data) {
+        console.log(data);
+    })
+    .fail(function() {
+        console.log('ocurrió un problema al obtener medicinas');
+    });
+}
 
 $('#med-search').on('keyup', function(){
     $( '#med-search' ).autocomplete({
@@ -395,7 +432,7 @@ function selectTemplate(medicine, presentationArr) {
 }
 
 function setMedQty() {
-    $('#workingQty').html('<i class="fa fa-cog fa-spin fa-2x fa-fw"></i>')
+    $('#workingQty').html('<i class="fa fa-cog fa-spin fa-4x fa-fw"></i>')
     var days = $('#medDays').val();
     var freq = $('#medFreq').val();
     var dose = $('#medDosis').val();
@@ -528,7 +565,7 @@ $('#addMedBtn').on('click', function() {
                 $('#medicinesCards').append(`
                     <div class='med-card col-md-4' id='${newMed.id}'>
                         <div class='checkbox pull-left'>
-                            <input style="margin-left:10px;" class='check' id='checkbox_${newMed.id}' checked type='checkbox'>       
+                            <input style="margin-left:10px;" class='check' id='checkbox_${newMed.id}' checked type='checkbox'> 
                         </div>
                         <a class='btn btn-link pull-right' onclick='cardsUpdate("${newMed.id}")'><i class='fa fa-times' aria-hidden='true'></i></a>
                         <h3><center>${ newMed.name }</center></h3>
@@ -540,6 +577,7 @@ $('#addMedBtn').on('click', function() {
                 `)
 
                 toPrintList.push('checkbox_'+newMed.id);
+                cardsButtons();
             }
 
             
@@ -606,7 +644,6 @@ function cardsUpdate(id) {
                     </div>
                 `)
 
-                
                 if ( index+1 == medProgramList.length ) {
                     resolve(true)
                 }
@@ -623,8 +660,26 @@ function cardsUpdate(id) {
         toPrintList.forEach(element => {
             $('#'+element).prop( "checked", true ); 
         });
+
+        cardsButtons();
     });
     
+}
+
+function cardsButtons() {
+    if ( medProgramList.length == 1 ) {
+        $('#cardsButtons').html(`
+            <a class="btn btn-primary" style="visibility:hidden;">A</a>  
+            <a id="sendNewPrescriptions" class="btn btn-primary pull-right">Guardar nueva prescripción</a>
+        `)
+    } else if ( medProgramList.length > 1 ) {
+        $('#cardsButtons').html(`
+            <a class="btn btn-primary" style="visibility:hidden;">A</a>  
+            <a id="sendNewPrescriptions" class="btn btn-primary pull-right">Guardar nuevas prescripciones</a>
+        `)
+    } else if (medProgramList < 1) {
+        $('#cardsButtons').empty();
+    }
 }
 
 function randomId() {
@@ -652,6 +707,61 @@ $('#medicinesCards').on('mousedown', '.check', (obj) =>{
 
     console.log(toPrintList) 
 });
+
+$('#cardsButtons').on('click', '#sendNewPrescriptions', () => {
+    var withoutId = [];
+
+    medProgramList.forEach(element => {
+        delete element.id;
+        element.patient = patient.dni;
+        withoutId.push(element);
+    });
+    
+    $.ajax({
+        url: '/medication/api/prescription/new',
+        type: 'POST',
+        data: { arr: JSON.stringify(withoutId) }
+    })
+    .done(function(data) {
+        console.log(data)
+        if ( data.length == withoutId.length ) {
+            swal({
+                type: 'success',
+                title: 'Nuevas prescripciones guardadas correctamente',
+                showConfirmButton: false,
+                timer: 4000
+            })
+
+            $('#medicinesCards').empty();
+
+            withoutId.forEach(element => {
+                var addPrescription = [
+                    element.name,
+                    element.initDay,
+                    element.endDay,
+                    element.qty,
+                    '<b>'+element.dose+'</b> <b>'+element.presentation+'</b> cada <b>'+element.freq+'</b> horas por <b>'+element.days+'</b> días.'
+                ]
+
+                var rowNode = medicinesTable
+                .row.add(addPrescription)
+                .draw()
+                .node();
+
+                $( rowNode )
+                .css( 'color', 'rgba(26, 188, 156,1.0)' )
+                .animate( { color: 'black' }, 5000 );
+            });
+
+            medProgramList = [];
+            cardsButtons();
+        }
+    })
+    .fail(function() {
+        console.log('ocurrió un problema al insertar prescripciones');
+    });
+    
+})
 
 </script>
 {{/extend}}

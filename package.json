@@ -24,6 +24,7 @@
     "hapi-postgres-connection": "^6.4.0",
     "inert": "^4.2.1",
     "joi": "^13.0.0",
+    "moment": "^2.19.4",
     "vision": "^4.1.1"
   }
 }

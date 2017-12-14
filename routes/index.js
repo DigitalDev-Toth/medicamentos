@@ -5,6 +5,7 @@ import Medicine         from './medicine';
 // API
 import APIPatients      from './api/patients';
 import APIMedicines     from './api/medicines';
+import APIPrescriptions from './api/prescriptions';
 
 const Index = {
     method: ['GET'],
@@ -61,7 +62,8 @@ const Routes = [].concat(
     Index,
     Medicine,
     APIPatients,
-    APIMedicines
+    APIMedicines,
+    APIPrescriptions
 );
 
 export default Routes;
