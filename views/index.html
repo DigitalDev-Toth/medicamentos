@@ -24,10 +24,10 @@
                                     <h3 class="panel-title">Alertas y contraindicaciones</h3>
                                 </div>
                                 <div class="panel-body" style="max-height:162px;">
-                                    <table id="alertsTable" class="display nowrap" cellspacing="0" width="100%"  >
+                                    <table id="alertsTable" style="margin-top:-10px;" class="display nowrap" cellspacing="0" width="100%"  >
                                         <thead>
                                             <tr>
-                                                <th>Alerta</th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -168,9 +168,23 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">Medicamentos en uso</h3>
                     </div>
-                    <div style="margin:5px;" class="panel-body row" id="medicinesCards">
-                        
+
+                    <div style="margin:5px;" class="panel-body row" id="medicinesCards"></div>
+
+                    <div class="well">
+                        <table id="medicinesTable" class="display nowrap" cellspacing="0" width="100%"  >
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Desde</th>
+                                    <th>Hasta</th>
+                                    <th>Cantidad</th>
+                                    <th>Indicaciones</th>
+                                </tr>
+                            </thead>
+                        </table>
                     </div>
+                    
                 </div>
             </div>
 
@@ -186,8 +200,9 @@ var medicines = [];
 var medicinesTable;
 var alertsTable;
 var selectedTemplate;
-var currentMedContr = [];
-var alertCount = 0;
+var contraindicationsList = [];
+var medProgramList = []; // Los medicamentos que se están programando en la sesión
+var toPrintList = []; // Lista de recetas a imprimir
 
 $(document).ready(function() {
     $('#medPresentation').select2({
@@ -195,17 +210,22 @@ $(document).ready(function() {
         placeholder: 'Seleccione la presentación'
     });
 
-    /*
+    
     medicinesTable = $('#medicinesTable').DataTable({
         responsive: true,
-        order: [[ 0, "desc" ]],
+        order: [[ 1, 'asc' ]],
+        language: {
+            emptyTable: 'Sin prescripciones'
+        },
+        paging: false
+        /*
         columnDefs: [
             { "visible": false, "targets": 4 },
             { "visible": false, "targets": 5 },
             { "visible": false, "targets": 6 }
-        ]
+        ]*/
     });
-    */
+    
 
     alertsTable = $('#alertsTable').DataTable({
         responsive: true,
@@ -213,7 +233,11 @@ $(document).ready(function() {
         paging:   false,
         ordering: false,
         info: false,
-        searching: false
+        searching: false,
+        language: {
+            emptyTable: "Sin alertas"
+        },
+        scrollY: '130'
 	})
 
     $.ajax({
@@ -432,6 +456,7 @@ $('#addMedBtn').on('click', function() {
         var selectedMedCountQty = 0;
         var selectedMedTotalQty = 0;
 
+
         /*
         var newMed = [
             newMedName,
@@ -444,46 +469,24 @@ $('#addMedBtn').on('click', function() {
         if ( newMedQty > selectedTemplate.limitQty ) {
             toastr.warning('Se sobrepasa la cantidad máxima de prescripción');
         } else {
-            /*
-            var newMed = [
-                newMedName, newMedInitDay, newMedEndDay, newMedQty, newMedDays, newMedFreq, newMedPresentation
-            ]*/
             
-            /*
-            currentMedContr[selectedMed.name] = {
-                concurrentUseList: selectedMed.rules.concurrentUseList
-            }
-            */
-
-            /*
-            medicines.forEach(function(element) {
-                currentMedContr[element.name].concurrentUseList.forEach(function(element2) {
-                    if ( !element.indexOf(element2) -1 ) {
-                        
-                    }
-                });
-            });
-            */
-
-            //console.log(currentMedContr)
-            
-
-            medicines.forEach(function(element, index) {
+            medProgramList.forEach(function(element, index) {
                 if ( newMedName == element.name ) {    
                     selectedMedTotalQty += parseInt(element.qty);
                     
-                    /*
-                    var rowNode = alertsTable
-                    .row.add(['El paciente ya está en un tratamiento con el medicamento <b>'+newMedName+'</b>'])
-                    .draw()
-                    .node();
+                    if ( contraindicationsList.indexOf(newMedName) == -1 ) { // si no existe alerta del medicamento
+                        contraindicationsList.push(newMedName) // agregar alerta a lista de alertas
+                        var rowNode = alertsTable // agregar alerta a tabla de alertas
+                        .row.add(['El paciente ya está en un tratamiento con el medicamento <b>'+newMedName+'</b>'])
+                        .draw()
+                        .node();
 
-                    $( rowNode )
-                    .css( 'color', 'rgba(26, 188, 156,1.0)' )
-                    .animate( { color: 'black' }, 5000 );
-                    */
+                        $( rowNode )
+                        .css( 'color', 'rgba(26, 188, 156,1.0)' )
+                        .animate( { color: 'black' }, 5000 );
+                    }                    
 
-                    }   
+                }   
             });
 
             selectedMedCountQty = selectedMedTotalQty + parseInt(newMedQty);
@@ -495,6 +498,7 @@ $('#addMedBtn').on('click', function() {
                 toastr.warning('Se sobrepasa la cantidad máxima de prescripción');
             } else {
                 var newMed = {
+                    id: randomId(), // identificador solo para uso de programación (BORRAR ANTES DE INSERTAR)
                     name: newMedName,
                     initDay: newMedInitDay,
                     endDay: newMedEndDay,
@@ -504,7 +508,9 @@ $('#addMedBtn').on('click', function() {
                     presentation: newMedPresentation,
                     qty: newMedQty
                 }
-                medicines.push(newMed);
+                medProgramList.push(newMed);
+
+                console.log(medProgramList)
 
                 /*
                 var rowNode = medicinesTable
@@ -517,8 +523,14 @@ $('#addMedBtn').on('click', function() {
                 .animate( { color: 'black' }, 5000 );
                 */
 
+                //medProgramList.push(newMed);
+
                 $('#medicinesCards').append(`
-                    <div class="med-card col-md-4">
+                    <div class='med-card col-md-4' id='${newMed.id}'>
+                        <div class='checkbox pull-left'>
+                            <input style="margin-left:10px;" class='check' id='checkbox_${newMed.id}' checked type='checkbox'>       
+                        </div>
+                        <a class='btn btn-link pull-right' onclick='cardsUpdate("${newMed.id}")'><i class='fa fa-times' aria-hidden='true'></i></a>
                         <h3><center>${ newMed.name }</center></h3>
                         <p>Desde: ${ moment(newMed.initDay).format('DD/MM/YYYY hh:mm') }</p>
                         <p>Hasta: ${ moment(newMed.endDay).format('DD/MM/YYYY hh:mm') }</p>
@@ -526,6 +538,8 @@ $('#addMedBtn').on('click', function() {
                         <p>Indicaciones: <b>${newMed.dose}</b> <b>${newMed.presentation}</b> cada <b>${newMed.freq}</b> horas por <b>${newMed.days}</b> días.</p>
                     </div>
                 `)
+
+                toPrintList.push('checkbox_'+newMed.id);
             }
 
             
@@ -557,6 +571,86 @@ $('#addMedBtn').on('click', function() {
         toastr.warning('Ningún medicamento seleccionado');
     }
 
+});
+
+function cardsUpdate(id) {
+    console.log(id)
+    medProgramList.forEach((element, index) => { // funcionando
+        if (element.id == id) {
+            medProgramList.splice(index, 1);
+        }
+    });
+           
+    $('#'+id).addClass('animated fadeOutUp'); 
+
+    if( toPrintList.indexOf('checkbox_'+id) > -1 ) {
+        toPrintList.splice(toPrintList.indexOf('checkbox_'+id), 1)
+    }
+
+    var lastIteration = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            $('#medicinesCards').empty();
+                
+            medProgramList.forEach((element, index) => {
+                $('#medicinesCards').append(`
+                    <div class='med-card col-md-4' id='${element.id}'>
+                        <div class='checkbox pull-left'>
+                            <input style="margin-left:10px;" class='check' id='checkbox_${element.id}' type='checkbox'> 
+                        </div>
+                        <a class='btn btn-link pull-right' onclick='cardsUpdate("${element.id}")'><i class='fa fa-times' aria-hidden='true'></i></a>
+                        <h3><center>${ element.name }</center></h3>
+                        <p>Desde: ${ moment(element.initDay).format('DD/MM/YYYY hh:mm') }</p>
+                        <p>Hasta: ${ moment(element.endDay).format('DD/MM/YYYY hh:mm') }</p>
+                        <p>Cantidad: ${element.qty}</p>
+                        <p>Indicaciones: <b>${element.dose}</b> <b>${element.presentation}</b> cada <b>${element.freq}</b> horas por <b>${element.days}</b> días.</p>
+                    </div>
+                `)
+
+                
+                if ( index+1 == medProgramList.length ) {
+                    resolve(true)
+                }
+            });
+
+            if (medProgramList.length < 1) {
+                resolve(true)
+            }
+        
+        }, 500); 
+    });
+
+    lastIteration.then(() => { // cambiar estados de checkbox imprimir receta a true
+        toPrintList.forEach(element => {
+            $('#'+element).prop( "checked", true ); 
+        });
+    });
+    
+}
+
+function randomId() {
+	var stringLength = 30;
+	var stringArray = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+    var rndString = '';
+	for (var i = 1; i < stringLength; i++) { 
+        var rndNum = Math.ceil(Math.random() * stringArray.length) - 1;
+        rndString = rndString + stringArray[rndNum];
+    };
+    return rndString;
+}
+
+$('#medicinesCards').on('mousedown', '.check', (obj) =>{
+    var id = obj.currentTarget.id;
+    var status = !obj.currentTarget.checked
+
+    if (status) {
+        if (toPrintList.indexOf(id) == -1) {
+            toPrintList.push(id)
+        }
+    } else {
+        toPrintList.splice(toPrintList.indexOf(id), 1);
+    }
+
+    console.log(toPrintList) 
 });
 
 </script>
