@@ -19,7 +19,42 @@ const prescriptions = [
             AND 
                 data ->> 'patient' = '${patient}'
             AND
-                data ->> 'endDay' > '${moment().format("YYYY-MM-DDThh:mm")}';
+                data ->> 'endDay' > '${moment().format("YYYY-MM-DD")}';
+            `;
+            
+            request.pg.client.query(select, function(err, result) {
+                if (err) throw err
+                
+                return reply(result.rows);
+            });
+            
+            
+        },
+        validate: {
+            payload: Joi.object().keys({
+                patient: Joi.string()
+            })
+        }
+    }
+},
+{
+    method: 'POST',
+    path: '/medication/api/historyPrescriptions',
+    config: {
+        handler: (request, reply) => {
+            let patient = request.payload.patient;
+
+            let select = `
+            SELECT
+                data
+            FROM
+                medicamentos
+            WHERE 
+                data ->> 'resourceType' = 'Prescription'
+            AND 
+                data ->> 'patient' = '${patient}'
+            AND
+                data ->> 'endDay' < '${moment().format("YYYY-MM-DD")}';
             `;
             
             request.pg.client.query(select, function(err, result) {
@@ -42,7 +77,7 @@ const prescriptions = [
     path: '/medication/api/prescription/new',
     config: {
         handler: (request, reply) => {
-            let prArr = request.payload.arr;
+            let prArr = request.payload.arr; // arreglo de nuevas prescripciones
             let toJson = JSON.parse(prArr);
             let usuarioDePrueba = '321321321';
             let concatQuery = '';
@@ -56,6 +91,7 @@ const prescriptions = [
             request.pg.client.query(concatQuery, function(err, result) {
                 if (err) throw err
                 
+                console.log(result)
                 if (result.length > 0) {
                     let rows = []
                     result.forEach(element => {
