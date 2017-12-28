@@ -128,6 +128,7 @@ var templatesList = [];
 var presentationsFullList = []; // toda la prensentación
 var modalView = 0;
 var qtyCount = 0; // ids de qty
+var templateSelected; // El template que se está modificando
 
 $(document).ready(function() {
     console.log('{{{ medicine }}}')
@@ -137,7 +138,6 @@ $(document).ready(function() {
     core = JSON.parse('{{{ core }}}')
     console.log(core)
     
-
     $('#medName').val(medicine.name);
 
     $('#status').bootstrapToggle({
@@ -157,6 +157,7 @@ $(document).ready(function() {
 
     chargePresentations();
     chargeRules();
+    
 });
 
 function chargeRules() {
@@ -334,7 +335,7 @@ function chargeTemplateModal(templateName) {
     $('#modal1').modal();
     $('#modal1Title').html(templateName)
 
-    var templateSelected = templatesList[templateName];
+    templateSelected = templatesList[templateName];
     console.log(templateSelected);
 
     var presentationArr = [];
@@ -670,7 +671,8 @@ $('#modalApplyButton').on('click', function() {
     var triggerMaxAge = $('#triggerMaxAge').val();
 
     console.log(templateName, templatePresentation, templateDose, templateFreq, templateDays, triggerMinAge, triggerMaxAge) 
-     
+    
+    
  } else if ( modalView == 2 ) { // nueva plantilla
     var newTemplateName = $('#newTemplateName').val();
     var newTemplatePresentation = $('#newTemplatePresentation').select2('data')[0].text;

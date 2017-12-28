@@ -57,7 +57,7 @@ const medicines = [
                 if (err) throw err
                 let arr = [];
                 
-                console.log(result.rows)
+                //console.log(result.rows)
                 /*
                 result.rows.forEach(function(element, i) {
                    arr.push(element.name); 
@@ -96,7 +96,36 @@ const medicines = [
                 if (err) throw err
                 
                 if(result.rows[0]) {
-                    return reply(result.rows[0].data);
+                    //console.log(result.rows[0])
+                    let medicine = result.rows[0].data;
+                    let concurrentUseList = JSON.stringify(result.rows[0].data.rules.concurrentUseList);
+                    let r1 = concurrentUseList.replace("[", "(");
+                    let r2 = r1.replace("]", ")");
+                    
+                    let select2 = `
+                    SELECT
+                        data ->> 'name' AS name
+                    FROM
+                        medicamentos
+                    WHERE
+                        id IN ${r2}
+                    AND 
+                        data ->> 'status' = 'active'
+                    `;
+
+                    request.pg.client.query(select2, function(err2, result2) {
+                        if (err2) throw err2
+
+                        let textConcurrentUseList = [];
+                        
+                        result2.rows.forEach(function(element, index) {
+                            textConcurrentUseList.push(element.name)
+                        });
+
+                        medicine.rules.concurrentUseList = textConcurrentUseList;
+                        return reply(medicine);
+                    })
+                
                 } else {
                     return reply('none');
                 }
